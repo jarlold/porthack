@@ -1,5 +1,6 @@
 import os
 from sys import argv
+from sys import stdout
 from metasploit.msfrpc import MsfRpcClient
 from metasploit.msfconsole import MsfRpcConsole
 import time
@@ -10,10 +11,10 @@ CVEs = argv[1:]
 
 
 # These variables will hold the output of the console after command executions
-global global_positive_out
-global_positive_out = list()
-global global_console_status
-global_console_status = False
+global console_buffer
+console_buffer = list()
+global console_busy
+console_busy = False
 
 
 # The callback function that sets the above variables after client.execute 
@@ -21,34 +22,34 @@ global_console_status = False
 # Edit: this isn't the exact code from stack overflow anymore, it's a simplified
 # version
 def read_console(console_data):
-#    global global_console_status
-#    global_console_status = console_data['busy']
+#    global console_busy
+#    console_busy = console_data['busy']
     sigdata = console_data['data'].rstrip().split('\n')
     for line in sigdata:
-        global_positive_out.append(line)
-    global global_console_status
-    global_console_status = False
+        console_buffer.append(line)
+    global console_busy
+    console_busy = False
 
 # Clears the console, it's mainly wrapped to make updating it easier in the future
 def clear_console():
-    global global_positive_out
-    global_positive_out = list()
+    global console_buffer
+    console_buffer = list()
 
-# Creates the client object
+# Creates the client object that connects to MSF server
 client = MsfRpcClient("hacksh1337", ssl=False)
     
-# Create the conso
+# Create the console object used to access MSF console
 console = MsfRpcConsole(client, cb=read_console)
 
 # Find all the msfmodules relating to each CVE
 def search_for_cve(cve):
     clear_console()
-    global global_console_status
-    global_console_status = True
+    global console_busy
+    console_busy = True
     console.execute("search cve:{}".format(cve))
-    while global_console_status:
+    while console_busy:
         time.sleep(1)
-    return global_positive_out
+    return console_buffer
 
 # Cleans out CVE data from search_for_cve, to only include the path (I.E exploit/windows/smb/ms17_010...) of exploits
 # because an automatic script can't really use auxilary or scanner modules without a lot of pre-coding -\(-_-)/-
@@ -65,9 +66,10 @@ for i in CVEs:
     cve_data += clean_cve_search(search_for_cve(i))
 
 
-# Print out the CVE data 
+# Print out the CVE data so the hack.sh script can pick it up from STDIO
 for i in cve_data:
-    print(" --> " + i)
+    stdout.write(i + "\n")
+stdout.flush()
 
 # For some reason this is nessasary, mabye a hanging thread in a library or something
 # oh well sucks to be that thread, get rekt nerd
