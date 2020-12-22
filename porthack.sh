@@ -15,8 +15,6 @@ echo """
 # -> Nmap vulners scan [X]
 # -> put the CVEs into metasploit [X]
 #    --> bring up CVEs (selector menu?)
-# -> put the CVEs into exploit_db command [X]
-#    --> bring up CVEs  (selector menu?)
 # -> If port 80
 #    --> run SQLMap
 #    --> run wordpress hack
@@ -60,29 +58,4 @@ do
     echo "  --> ${i}"
 done
 echo 
-
-# searchsploit doesn't like to play well with vulners.nse's output 
-echo "Doing a less verbose nmap scan..."
-scan2=$(nmap -sV $1 -oX scan2.xml)
-
-
-# Searches exploitdb for exploits based off of the second nmap scan
-# As of now the user is left to sift through these themselves, since
-# the formatting and accesibility of these exploits is inconsistent
-# and executing them can offer a security risk for the attacker
-echo "Searching searchsploit with non-verbose nmap scan..."
-echo "Results:"
-searchsploit --nmap scan2.xml 
-
-# Delete the extra nmap scan that we made
-rm scan2.xml
-
-
-
-
-
-
-
-
-
 

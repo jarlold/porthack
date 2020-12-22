@@ -13,8 +13,6 @@ things without an `[X]` next to them are planned.
  -> Nmap vulners scan [X]
  -> put the CVEs into metasploit [X]
     --> bring up CVEs (selector menu?)
- -> put the CVEs into exploit_db command [X]
-    --> bring up CVEs  (selector menu?)
  -> If port 80
     --> run SQLMap
     --> run wordpress hack
