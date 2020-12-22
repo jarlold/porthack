@@ -1,4 +1,3 @@
-
 # Prints totally rad ASCII art logo so you know I'm an
 # e1337 h4x0r.
 echo "porthack script by Jarlold"
