@@ -2,11 +2,11 @@
 A script to try a bunch of obvious steps in service exploitation, this script is very 'noisy' and probably
 shouldn't be used on a system with any sort of IDS or ICE.
 
-tl;dr
+tl;dr<br>
 ![random_bullshit](random_bullshit_go.png)
 
 # What exactly does it do?
-
+```
 things with an `[X]` next to them are implemented
 things without an `[X]` next to them are planned.
 
@@ -29,4 +29,4 @@ things without an `[X]` next to them are planned.
     --> Try default FTP logins
  -> If SQL
     --> Try default SQL logins
-
+```
