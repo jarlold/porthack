@@ -31,15 +31,26 @@ echo """
 #    --> Try default SQL logins
 
 
-
 # Uses the nmap "vulners.nse" vulnerability detection script
 echo "Doing nmap vulnerability scan..."
 scan1=$(nmap -sV --script vulners $1)
+echo "  --> done!"
+echo
+
+# Use some regex headaches to just find the services
+services="""$(echo "$scan1" | egrep --only-matching "([0-9]{1,5})\/...\s{1,20}\w{4,9}\s{1,20}\w{1,30}")"""
+echo "Found the following services:"
+for i in ${services// /_} # look i'm not a bash programmer...
+do
+    echo "  --> ${i//_/ }" # trying to split this string was _weird_
+done
+echo
 
 
 # Find and count the number of CVEs
-CVEs=$(echo ${scan1}  | grep --only-matching 'CVE-....-.....') # not sure if this counts *ever* CVE format
+CVEs=$(echo ${scan1}  | grep --only-matching 'CVE-....-.....') # not actually sure if this counts *every* CVE format
 NumCVEs=$(echo ${CVEs} | grep --only-matching "CVE" | wc -l)
+echo "And the following CVEs:"
 echo "  --> found ${NumCVEs} CVEs"
 echo
 
