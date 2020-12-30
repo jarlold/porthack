@@ -17,7 +17,7 @@ things without an `[X]` next to them are planned.
     --> run SQLMap
     --> run wordpress hack
     --> detect router page?
-        --> run router default logins
+        --> run router exploit
     --> detect login page [X]
         --> offer to skip process
         --> run default logins [X]
