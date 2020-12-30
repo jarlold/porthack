@@ -25,10 +25,6 @@ username_keywords = ["username", "name"]
 password_keywords = ["password"]
 
 
-def find_form_elements(page): # there's a nicer regex out there...
-    return re.findall("<input[^\/>]{1,}id=[^\/>]{1,}\/>", page)
-
-
 # Disables SSL verificaton, this is a security risk and makes the script vulernable to MiTM and false-host
 # attacks.
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -41,25 +37,55 @@ br.set_handle_robots(False)
 # Finally open up with webpage
 r = br.open(url)
 
-# Search it for a login prompt of some sort
-forms = find_form_elements(r.read())
-username_forms = list() # Find the usernames
-for i in forms:
-    for k in username_keywords:
-        if k.lower() in i.lower():
-           username_forms.append(i)
+# Will find a form with 2 controls and a username prompt or 2 controls and a password prompt
+# In the event of a double-matfh will prioritize the last form over the first one
+def find_login_form(br): 
+    login_form = None
+    username_control = None
+    password_control = None
 
-password_forms = list() # Find the passwords
-for i in forms:
-    for k in password_keywords:
-        if k.lower() in i.lower():
-            password_forms.append(i)
+    for l in br.forms(): 
 
-print("username:")
-for i in username_forms: print(i)
-print("passwords:")
-for i in password_forms: print(i)
+        for i in l.controls: 
+            for k in username_keywords: 
+                if (i.name and k in i.name) or (i.id and k in i.id): # IS TO GO
+                    login_form = l 
+                    username_control = i 
 
-id = re.findall("name=[^ ]{1,}\s", username_forms[0])[0].strip().replace("\"", '')[5:]
-print(id)
-br.select_form(name="name")
+            for k in password_keywords:
+                if (i.name and k in i.name) or (i.id and k in i.id) and not k == username_control:
+                    login_form = l
+                    password_control = i
+    if login_form:
+        return login_form, username_control, password_control
+
+# Assuming a form is already selected, will try a username and password combination and return the result.
+def try_username_password(br, user_control, pass_control, username, password):
+    br[str(user_control.name)] = username
+    br[str(pass_control.name)] = password
+    return br.submit()
+
+# Find the form and select it in the browser
+login_form, username_control, password_control  = find_login_form(br)
+br.form = login_form
+
+# Load in the list of default username and passwords to try out
+with open("default_passwords.txt", 'r') as opn:
+    default_passwords = opn.readlines()
+
+# Where we'll store all the HTML we get back from trying passwords
+results = []
+
+# Add a first bogus result, so we know what the page looks like when we fail to log in
+results.append(try_username_password(br, username_control, password_control, "rtryearaernguio", "asdhuilaubefaefa")) # intellectual
+
+# Try them all lol
+for i in default_passwords:
+    i.strip().strip("\n")
+    username, password = i.split(" ")
+    br.form = login_form # reselect the form each time
+    res = try_username_password(br, username_control, password_control, username, password)
+    if not res in results:
+        results.append(res)
+
+

@@ -18,9 +18,9 @@ things without an `[X]` next to them are planned.
     --> run wordpress hack
     --> detect router page?
         --> run router default logins
-    --> detect login page
+    --> detect login page [X]
         --> offer to skip process
-        --> run default logins
+        --> run default logins [X]
  -> If SSH
     --> Try default SSH logins
  -> If FTP
@@ -35,7 +35,8 @@ The current requirements are:<br>
     - searchsploit<br>
     - nmap<br>
     - metasploit framework<br>
-    - python2.7, with pymetasploit<br>
+    - python2.7, with pymetasploit & mechanize<br>
+    
 <br>
 These all need to be in your system path. (I.E /usr/bin/ or wherever else)!<br>
 In future the python script will be compiled to executables before distribution, but let me make the script
