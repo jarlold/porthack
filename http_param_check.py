@@ -81,11 +81,12 @@ results.append(try_username_password(br, username_control, password_control, "rt
 
 # Try them all lol
 for i in default_passwords:
-    i.strip().strip("\n")
-    username, password = i.split(" ")
+    i = i.strip().strip("\n")
+    username, password = i.split(" ") if len(i.split(" ")) == 2 else (i, "")
+    print(username, password)
     br.form = login_form # reselect the form each time
     res = try_username_password(br, username_control, password_control, username, password)
     if not res in results:
         results.append(res)
 
-
+print(len(results))
