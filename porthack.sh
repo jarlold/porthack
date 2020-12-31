@@ -11,7 +11,7 @@ echo """
            Random Bullshit Go!
 """
 
-# Check for
+# Check for:
 # -> Nmap vulners scan [X]
 # -> put the CVEs into metasploit [X]
 #    --> bring up CVEs (selector menu?)
@@ -19,10 +19,10 @@ echo """
 #    --> run SQLMap
 #    --> run wordpress hack
 #    --> detect router page?
-#        --> run router default logins
-#    --> detect login page
+#        --> run router exploit
+#    --> detect login page [X]
 #        --> offer to skip process
-#        --> run default logins
+#        --> run default logins [X]
 # -> If SSH
 #    --> Try default SSH logins
 # -> If FTP
@@ -46,11 +46,10 @@ do
 done
 echo
 
-
 # Find and count the number of CVEs
 CVEs=$(echo ${scan1}  | grep --only-matching 'CVE-....-.....') # not actually sure if this counts *every* CVE format
 NumCVEs=$(echo ${CVEs} | grep --only-matching "CVE" | wc -l)
-echo "And the following CVEs:"
+echo "And the following number of CVEs:"
 echo "  --> found ${NumCVEs} CVEs"
 echo
 
@@ -70,3 +69,11 @@ do
 done
 echo 
 
+# Check if http is listed in the services from the nmap scan
+is_http=$(echo $services | grep --only-matching "80/tcp")
+
+# If so, run a script to try a bunch of default usernames and passwords on it
+if [ "${is_http}" == "80/tcp" ]
+then
+    python2 ./http_param_check.py http://$1
+fi

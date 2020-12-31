@@ -67,6 +67,14 @@ def try_username_password(br, user_control, pass_control, username, password):
     br[str(pass_control.name)] = password
     return br.submit()
 
+# Will take a string of HTML and try to determine if it's a successful login page
+# Returns false if failure, returns True if not-failure
+def is_page_login_success(page, normal_page):
+    for i in login_failure_keywords:
+        if i in page and not i in normal_page:
+            return False
+    return True
+
 # Find the form and select it in the browser
 login_form, username_control, password_control  = find_login_form(br)
 br.form = login_form
@@ -75,61 +83,35 @@ br.form = login_form
 with open("default_passwords.txt", 'r') as opn:
     default_passwords = opn.readlines()
 
-# We need to gather some example failure, so we can determine what parts of the page are just always
-# different (Like time stamps, or amazon web services links)
-example_failures = [] # this is also the name of my autobiography
+# Where we'll store the results of our dictionary attack
+login_responses = []
 
-br.form = login_form # reselect the form each time
-example_failures.append(
-    try_username_password(br, username_control, password_control, "rtryearaernguio", "asdhuilaubefaefa").read().replace("rtryearaernguio", '').replace("asdhuilaubefaefa", '')
-    )
+# Update the user
+print("Trying default_passwords.txt on website login...")
 
-br.form = login_form # reselect the form each time
-example_failures.append(
-    try_username_password(br, username_control, password_control, "sasdaksjdlkguio", "jsdlkjlieaefaefa").read().replace("sasdaksjdlkguio", '').replace("jsdlkjlieaefaefa", '')
-    ) 
-
-ex1 = example_failures[0].split("\n")
-ex2 = example_failures[1].split("\n")
-delta_lines = []
-
-for i in ex1:
-    for k in ex2:
-        if not k in i:
-            delta_lines.append(k)
-        if not i in k:
-            delta_lines.append(i)
-   
-print(delta_lines)
-exit()
-
-# Removes the delta lines (from above) from a page, so we can compare it to other login attempts more accurately
-def clean_delta_lines(page):
-    for i in delta_lines:
-        page = page.replace(i, '')
-    return page 
-
-# Where we'll store all the HTML we get back from trying passwords
-results = [example_failures[0]] # start with a failed attempt, so we don't log failures
-
-# Try them all lol
+# Try all the passwords lol
 for i in default_passwords:
+    # Parse the password from the file
     i = i.strip().strip("\n")
     username, password = i.split(" ") if len(i.split(" ")) == 2 else (i, "")
-    print(username, password)
+
+    # Try the username + password combo
     br.form = login_form # reselect the form each time
     res = try_username_password(br, username_control, password_control, username, password).read().replace(username, '').replace(password, '')
-    res = clean_delta_lines(res)
-    if not res in results:
-        results.append(res)
 
-    opn = open("readout/"+username+password, 'w')
-    opn.write(res)
-    opn.close()
+    # If the result doesn't look too much like a failure, log it!
+    if is_page_login_success(res, r) : # 'r' is the response from when we first opened the login page (above)
+       login_responses.append( (username, password, res) )
 
-# Will take a string of HTML and try to determine if it's a successful login page
-def determine_page_login_success(page):
-    for i in login_failure_keywords:
-        pass
 
-print(len(results))
+# If too many responses come back valid, show some skepticism
+if len(login_responses) > 0.2 * len(default_passwords):
+    print("Error in detecting page responses (too many valid), not trying default passwords")
+    exit()
+
+# Print possible valid logins
+print("The following usernames + passwords *MAY* be valid:")
+for i in login_responses:
+    print("  --> " + i[0] + " " + i[1])
+
+
