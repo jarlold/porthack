@@ -75,5 +75,5 @@ is_http=$(echo $services | grep --only-matching "80/tcp")
 # If so, run a script to try a bunch of default usernames and passwords on it
 if [ "${is_http}" == "80/tcp" ]
 then
-    python2 ./http_param_check.py http://$1
+    python2 ./try_default_logins.py http://$1/
 fi
