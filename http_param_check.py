@@ -46,8 +46,7 @@ def find_login_form(br):
                 if (i.name and k in i.name) or (i.id and k in i.id) and not k == username_control:
                     login_form = l
                     password_control = i
-    if login_form:
-        return login_form, username_control, password_control
+    return login_form, username_control, password_control
 
 
 # Assuming a form is already selected, will try a username and password combination and return the result.
@@ -103,10 +102,18 @@ def main():
     br.set_handle_robots(False)
 
     # Finally open up the webpage
+    print(url)
     original_page = br.open(url)
 
     # Find the form and select it in the browser
     login_form, username_control, password_control = find_login_form(br)
+
+    # If no login form, username control, or password was found, then this probably isn't a log-in page
+    if not login_form or not username_control or not password_control:
+        directory = url.split("/")[-1] if not url[-1] == "/" else "/"
+        print("No login form found, skipping {} because it's probably not a login page.".format(directory))
+        exit()
+
     br.form = login_form
 
     # Check to see if we're able to tell apart failed and succesful logins
