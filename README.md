@@ -21,8 +21,8 @@ things without an `[X]` next to them are planned.
     --> detect login page [X]
         --> offer to skip process
         --> run default logins [X]
- -> If SSH
-    --> Try default SSH logins
+ -> If SSH [X]
+    --> Try default SSH logins [X]
  -> If FTP
     --> Try default FTP logins
  -> If SQL
@@ -35,7 +35,10 @@ The current requirements are:<br>
     - searchsploit<br>
     - nmap<br>
     - metasploit framework<br>
-    - python2.7, with pymetasploit & mechanize<br>
+    - python2.7<br>
+        with pymetasploit <br>
+        mechanize <br>
+        paramiko <br>
     
 <br>
 These all need to be in your system path. (I.E /usr/bin/ or wherever else)!<br>
