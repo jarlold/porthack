@@ -4,7 +4,7 @@ shouldn't be used on a system with any sort of IDS or ICE.
 
 tl;dr<br>
 <center>
-    ![random_bullshit](random_bullshit_go.png)
+    <img src="./random_bullshit_go.png">
 </center>
 
 # What exactly does it do?
