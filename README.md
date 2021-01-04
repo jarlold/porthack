@@ -30,17 +30,19 @@ things without an `[X]` next to them are planned.
 ```
 
 # Installation and Requirements
+```
 To install just clone the repo and run porthack.sh<br>
 The current requirements are:<br>
     - searchsploit<br>
     - nmap<br>
     - metasploit framework<br>
     - python2.7<br>
-    &nbsp; with pymetasploit <br>
-    &nbsp; mechanize <br>
-    &nbsp; paramiko <br>
+           with pymetasploit <br>
+           mechanize <br>
+           paramiko <br>
     
 <br>
 These all need to be in your system path. (I.E /usr/bin/ or wherever else)!<br>
 In future the python script will be compiled to executables before distribution, but let me make the script
 not-useless before we bother with any of that, okay?
+```
