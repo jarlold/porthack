@@ -3,7 +3,9 @@ A script to try a bunch of obvious steps in service exploitation, this script is
 shouldn't be used on a system with any sort of IDS or ICE.
 
 tl;dr<br>
-![random_bullshit](random_bullshit_go.png)
+<center>
+    ![random_bullshit](random_bullshit_go.png)
+</center>
 
 # What exactly does it do?
 ```
