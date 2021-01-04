@@ -41,12 +41,15 @@ echo
 
 # Use some regex headaches to just find the services
 services="""$(echo "$scan1" | egrep --only-matching "([0-9]{1,5})\/...\s{1,20}\w{4,9}\s{1,20}\w{1,30}")"""
-echo "Found the following services:"
-for i in ${services// /_} # look i'm not a bash programmer...
-do
-    echo "  --> ${i//_/ }" # trying to split this string was _weird_
-done
-echo
+
+if [ "$(echo ${services} | wc -w)" != "0" ]; then
+    echo "Found the following services:"
+    for i in ${services// /_} # look i'm not a bash programmer...
+    do
+        echo "  --> ${i//_/ }" # trying to split this string was _weird_
+    done
+    echo
+fi
 
 # Find and count the number of CVEs
 CVEs=$(echo ${scan1}  | grep --only-matching 'CVE-....-.....') # not actually sure if this counts *every* CVE format
