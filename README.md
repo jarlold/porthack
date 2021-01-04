@@ -36,9 +36,9 @@ The current requirements are:<br>
     - nmap<br>
     - metasploit framework<br>
     - python2.7<br>
-        with pymetasploit <br>
-        mechanize <br>
-        paramiko <br>
+    &nbsp; with pymetasploit <br>
+    &nbsp; mechanize <br>
+    &nbsp; paramiko <br>
     
 <br>
 These all need to be in your system path. (I.E /usr/bin/ or wherever else)!<br>
