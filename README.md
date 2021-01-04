@@ -43,6 +43,6 @@ The current requirements are:<br>
     
 <br>
 These all need to be in your system path. (I.E /usr/bin/ or wherever else)!<br>
-In future the python script will be compiled to executables before distribution, but let me make the script
-not-useless before we bother with any of that, okay?
+In future the python script will be compiled to executables before distribution,
+but let me make the script not-useless before we bother with any of that, okay?
 ```
