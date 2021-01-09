@@ -70,7 +70,7 @@ if [ ${NumCVEs} != 0 ]; then
     # Runs a Python script to search for CVEs from Metasploit Framework
     echo "Searching Metasploit framework for CVE scripts..."
     msf_cves=$(python2 msf_cve_search.py $CVEs)
-    num_msf_cves=$(echo ${msf_cves} | wc -l)
+    num_msf_cves=$(echo ${msf_cves} | wc -w)
     if [ ${num_msf_cves} != 0 ]; then
         for i in ${msf_cves}
         do
@@ -94,7 +94,7 @@ fi
 
 # Check if ssh is running on the box, if so, assume it's on port 22.
 # and then run a script to try a bunch of default usernames and passwords on it
-is_ssh=$(echo $services | grep --only-matching " ssh")
+is_ssh=$(echo $services | grep --only-matching "open ssh")
 if [ "${is_ssh}" = " ssh" ]
 then
     python2 ./try_default_ssh.py $1

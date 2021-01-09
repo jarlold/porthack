@@ -127,8 +127,12 @@ def main():
 
     # Print possible valid logins
     print("The following usernames + passwords *MAY* be valid:")
-    for i in login_responses:
-        print("  --> " + i[0] + " " + i[1])
+    if not len(login_responses) == 0:
+        for i in login_responses:
+            print("  --> " + i[0] + " " + i[1])
+    else:
+        print(" --> None :c")
+
 
 if __name__ == "__main__":
     main()
