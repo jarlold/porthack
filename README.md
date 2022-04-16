@@ -1,6 +1,7 @@
 # PortHack
 A script to try a bunch of obvious steps in service exploitation, this script is very 'noisy' and probably
-shouldn't be used on a system with any sort of IDS or ICE.
+shouldn't be used on a system with any sort of IDS or ICE. The goal of this script is to get as far as possible
+into the exploitation process without user input.
 
 tl;dr<br>
 
@@ -15,6 +16,7 @@ things with an `[X]` next to them are implemented
 things without an `[X]` next to them are planned.
 
  -> Nmap vulners scan [X]
+    --> Regex and cache which services are on which ports.
  -> put the CVEs into metasploit [X]
     --> bring up CVEs (selector menu?)
  -> If port 80 [X]
@@ -25,13 +27,17 @@ things without an `[X]` next to them are planned.
     --> detect login page [X]
         --> offer to skip process
         --> run default logins [X]
- -> If SSH [X]
+ -> If port 22 [X]
     --> Try default SSH logins [X]
- -> If FTP
-    --> Try default FTP logins
- -> If SQL
+ -> If port 21
+    --> Try default FTP logins [X]
+ -> If port 3306
     --> Try default SQL logins
 ```
+
+Currently the program revolves around default-ports, obviously this isn't
+ideal, and it should go through a brief recon step of figuring out which services
+are on what ports.
 
 # Installation and Requirements
 ```

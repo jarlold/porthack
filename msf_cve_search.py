@@ -1,8 +1,8 @@
 import os
 from sys import argv
 from sys import stdout
-from metasploit.msfrpc import MsfRpcClient
-from metasploit.msfconsole import MsfRpcConsole
+from pymetasploit3.msfrpc import MsfRpcClient
+from pymetasploit3.msfconsole import MsfRpcConsole
 import time
 import re
 
