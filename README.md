@@ -46,7 +46,7 @@ The current requirements are:
     - searchsploit
     - nmap
     - metasploit framework
-    - python2.7
+    - python3.x
            with pymetasploit 
            mechanize 
            paramiko 
