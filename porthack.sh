@@ -68,8 +68,8 @@ echo
 #echo
 
 # Print out the CVEs (unless there aren't any)
-#if [ ${NumCVEs} != 0 ]; then
-if [ 1 == 0 ]; then # SKIP MSF LOOKUP DEBUG
+if [ ${NumCVEs} != 0 ]; then
+#if [ 1 == 0 ]; then # SKIP MSF LOOKUP DEBUG
     # Runs a Python script to search for CVEs from Metasploit Framework
     echo "Searching Metasploit framework for CVE scripts..."
     msf_cves=$(python3 msf_cve_search.py $CVEs)
