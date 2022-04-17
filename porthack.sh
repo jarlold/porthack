@@ -54,6 +54,7 @@ fi
 
 # Find and count the number of CVEs
 CVEs=$(echo ${scan1}  | grep --only-matching 'CVE-....-.....') # not actually sure if this counts *every* CVE format
+#echo $CVEs
 NumCVEs=$(echo ${CVEs} | grep --only-matching "CVE" | wc -l)
 echo "And the following number of CVEs:"
 echo "  --> found ${NumCVEs} CVEs"
@@ -67,7 +68,8 @@ echo
 #echo
 
 # Print out the CVEs (unless there aren't any)
-if [ ${NumCVEs} != 0 ]; then
+#if [ ${NumCVEs} != 0 ]; then
+if [ 1 == 0 ]; then # SKIP MSF LOOKUP DEBUG
     # Runs a Python script to search for CVEs from Metasploit Framework
     echo "Searching Metasploit framework for CVE scripts..."
     msf_cves=$(python3 msf_cve_search.py $CVEs)
@@ -83,6 +85,7 @@ if [ ${NumCVEs} != 0 ]; then
     echo 
 fi
 
+
 # Check if anything is running on port 80, if so, assume it's ssh.
 # and then run a script to try a bunch of default usernames and passwords on it
 is_http=$(echo $services | grep --only-matching " 80/tcp")
@@ -92,22 +95,26 @@ then
     echo
 fi
 
-
 # Check if ssh is running on the box, if so, assume it's on port 22.
 # and then run a script to try a bunch of default usernames and passwords on it
-is_ssh=$(echo $services | grep --only-matching "open ssh")
-if [ "${is_ssh}" = " ssh" ]
+#is_ssh=$(echo $services | grep --only-matching "open ssh")
+ssh_port=$(echo $services | sed "s/\W//g" | grep -Po "[0-9]{1,}(?=tcpopenssh)")
+if [ -n "$ssh_port" ]
 then
-    python3 ./try_default_ssh.py $1
+    python3 ./try_default_ssh.py $1 $ssh_port
     echo
 fi
 
 
 # Check if ftp is running on the box, if so, assume it's on port 21.
 # and then run a script to try a bunch of default usernames and passwords on it
-is_ftp=$(echo $services | grep --only-matching "open ftp")
-if [ "${is_ssh}" = " ftp" ]
+#is_ftp=$(echo $services | grep --only-matching "open ftp")
+ftp_port=$(echo $services | sed "s/\W//g" | grep -Po "[0-9]{1,}(?=tcpopenftp)")
+#if [ "${is_ftp}" = "open ftp" ]
+if [ -n "$ssh_port" ]
 then
-    python3 ./try_default_ftp.py $1
-    echo
+    for i in $ftp_port; do
+      python3 ./try_default_ftp.py $1 $i
+      echo
+    done
 fi

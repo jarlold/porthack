@@ -6,6 +6,7 @@ import _socket
 
 # Loads in the host IP address provided through stdin
 ip = str(argv[1])
+port = 21
 
 # Load in the list of usernames + passwords to test
 # We'll use the same username and passwords as SSH.
@@ -16,14 +17,16 @@ opn.close()
 # We'll store the possibly valid credentials in here
 valid_logins = []
 
+# Setup the FTP connection
+client = ftplib.FTP()
 
 # Test a login, we'll kill and restart the connection each time
 # this is to avoid certain session timeout errors.
 def attempt_login(username, password, timeout=30):
     try:
-        client = ftplib.FTP(ip, timeout=timeout)
+        #ftplib.FTP(ip, timeout=timeout)
+        client.connect(ip, port, timeout=timeout)
         client.login(username, password)
-        valid_logins.append(username, password)
         client.quit()
         return True
     except ftplib.error_perm as e:
@@ -63,6 +66,9 @@ def try_all_logins(login_list):
             continue
     return no_answer
 
+# Print out a little header so the user knows the program is actually running
+print("Trying common FTP creds on port " + str(port) + "...")
+
 # The code below will try all the logins, and record if it gets a valid login or a failed login.
 # If the answer isn't clear, it will add the credentials back to the list and try again. This
 # process will repeat 7 times before just giving up.
@@ -82,6 +88,6 @@ if not len(default_logins) == 0:
 print("The following logins (may) have been valid!:")
 if not len(valid_logins) == 0:
     for i in valid_logins:
-        print("  --> " + i)
+        print("  --> " + str(i))
 else:
     print("  --> None :c")

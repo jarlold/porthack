@@ -9,7 +9,6 @@ import re
 # Get the list of CVEs from STDIN
 CVEs = argv[1:]
 
-
 # These variables will hold the output of the console after command executions
 global console_buffer
 console_buffer = list()

@@ -4,10 +4,6 @@ root abc123
 root password
 root 123456
 root admin
-bill abc123
-mike mike
-mike password
-agata agata
 ftp ftp
 admin admin
 ftp ftp123
@@ -19,6 +15,7 @@ uploader uploader
 root 123qwe
 test test
 test password
-john password
-john john
-bill bill
+anonymous @anonymous
+anonymous anonymous
+anonymous anon
+anonymous
